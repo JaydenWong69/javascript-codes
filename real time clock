@@ -1,0 +1,47 @@
+javascript:(function() {
+  // Create a style element for the clock
+  var style = document.createElement('style');
+  style.innerHTML = `
+    #realtimeClock {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 9999;
+      background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff);
+      color: black;
+      font-size: 48px;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      background-size: 400% 400%;
+      animation: gradientAnimation 10s ease infinite;
+    }
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 0%; }
+      50% { background-position: 100% 100%; }
+      100% { background-position: 0% 0%; }
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Create the clock element
+  var clock = document.createElement('div');
+  clock.id = 'realtimeClock';
+  document.body.appendChild(clock);
+
+  // Function to update the clock
+  function updateClock() {
+    var now = new Date();
+    var hours = now.getHours().toString().padStart(2, '0');
+    var minutes = now.getMinutes().toString().padStart(2, '0');
+    var seconds = now.getSeconds().toString().padStart(2, '0');
+    clock.textContent = hours + ':' + minutes + ':' + seconds;
+  }
+
+  // Update the clock every second
+  setInterval(updateClock, 1000);
+  // Initial call to display the clock immediately
+  updateClock();
+})();
