@@ -1,0 +1,125 @@
+javascript:(function() {
+  // Create and apply styles
+  var style = document.createElement('style');
+  style.innerHTML = `
+    #hacksMenu {
+      position: fixed;
+      top: 10%;
+      left: 50%;
+      transform: translate(-50%, -10%);
+      width: 300px;
+      background: black;
+      color: #39ff14; /* Neon green */
+      padding: 15px;
+      border: 2px solid #39ff14; /* Neon green border */
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      z-index: 9999;
+      text-align: center;
+      cursor: move; /* Makes it clear the window is draggable */
+    }
+    #hacksMenu button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      color: black;
+      cursor: pointer;
+      font-weight: bold;
+      background: #39ff14; /* Neon green */
+    }
+    #hacksMenu button:hover {
+      background: #2b7a2f; /* Darker neon green */
+    }
+    #hacksMenu .redButton {
+      background: #ff4d4d; /* Red */
+    }
+    #hacksMenu .redButton:hover {
+      background: #cc0000; /* Darker red */
+    }
+    #hacksMenu .rainbowBtn {
+      background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet); /* Rainbow */
+      color: white;
+    }
+    #hacksMenu .rainbowBtn:hover {
+      background: linear-gradient(45deg, violet, indigo, blue, green, yellow, orange, red); /* Reverse rainbow */
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Create hacks menu element
+  var hacksMenu = document.createElement('div');
+  hacksMenu.id = 'hacksMenu';
+  var title = document.createElement('h2');
+  title.textContent = 'Ultimate Hacks';
+  hacksMenu.appendChild(title);
+
+  var buttons = [
+    { name: 'Unblock all websites from school/work admin', action: function() {
+      window.open('https://pastebin.com/LZEBBCn5', '_blank');
+    }},
+    { name: 'Hacks for Kahoot and Blooket', action: function() {
+      eval("document.body.contentEditable = 'true'; document.designMode='on'; void 0");
+    }},
+    { name: 'HACK ANOTHER DEVICE', action: function() {
+      alert('Use this function with responsibility. I am not liable if you get in trouble with the law');
+      var proceed = confirm('Do you wish to proceed?');
+      if (proceed) {
+        window.open('https://youtu.be/dQw4w9WgXcQ?si=tByuxMzcwv8prUKp', '_blank');
+      } else {
+        hacksMenu.remove();
+      }
+    }},
+  ];
+
+  buttons.forEach(function(button, index) {
+    var btn = document.createElement('button');
+    btn.textContent = button.name;
+    btn.onclick = button.action;
+    if (index === 2) {
+      btn.className = 'redButton'; // Change the button to red
+    } else {
+      btn.className = ''; // Default button styling
+    }
+    hacksMenu.appendChild(btn);
+  });
+
+  var closeButton = document.createElement('button');
+  closeButton.textContent = 'Close';
+  closeButton.className = 'rainbowBtn'; // Change the close button to rainbow
+  closeButton.onclick = function() {
+    hacksMenu.remove();
+  };
+  hacksMenu.appendChild(closeButton);
+
+  document.body.appendChild(hacksMenu);
+
+  // Make the menu draggable
+  var isDragging = false;
+  var startX, startY, initialLeft, initialTop;
+
+  hacksMenu.addEventListener('mousedown', function(e) {
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    initialLeft = parseFloat(getComputedStyle(hacksMenu).left);
+    initialTop = parseFloat(getComputedStyle(hacksMenu).top);
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', function(e) {
+    if (isDragging) {
+      var offsetX = e.clientX - startX;
+      var offsetY = e.clientY - startY;
+      hacksMenu.style.left = `${initialLeft + offsetX}px`;
+      hacksMenu.style.top = `${initialTop + offsetY}px`;
+      e.preventDefault();
+    }
+  });
+
+  document.addEventListener('mouseup', function() {
+    isDragging = false;
+  });
+})();
