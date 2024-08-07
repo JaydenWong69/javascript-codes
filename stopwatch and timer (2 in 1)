@@ -1,0 +1,184 @@
+javascript:(function() {
+  // Create a style element for the timer
+  var style = document.createElement('style');
+  style.innerHTML = `
+    #timerContainer {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      font-size: 24px;
+      padding: 15px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      display: none;
+    }
+    #timerControls {
+      margin-top: 10px;
+    }
+    #timerControls button,
+    #timerControls input {
+      font-size: 14px;
+      margin: 5px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #timerControls button {
+      background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff);
+      color: black; /* Change button text color to black */
+      border: 1px solid transparent;
+      background-size: 400% 400%;
+      animation: gradientAnimation 5s ease infinite;
+    }
+    #timerControls button:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    #timerControls input {
+      width: 100px;
+      text-align: center;
+    }
+    #closeButton {
+      background-color: #ff4d4d;
+      color: black; /* Change close button text color to black */
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    #closeButton:hover {
+      background-color: #cc0000;
+    }
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 0%; }
+      50% { background-position: 100% 100%; }
+      100% { background-position: 0% 0%; }
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Create the timer container
+  var container = document.createElement('div');
+  container.id = 'timerContainer';
+  document.body.appendChild(container);
+
+  // Create the timer display
+  var display = document.createElement('div');
+  container.appendChild(display);
+
+  // Create the controls
+  var controls = document.createElement('div');
+  controls.id = 'timerControls';
+  container.appendChild(controls);
+
+  var startButton = document.createElement('button');
+  startButton.textContent = 'Start';
+  controls.appendChild(startButton);
+
+  var stopButton = document.createElement('button');
+  stopButton.textContent = 'Stop';
+  controls.appendChild(stopButton);
+
+  var resetButton = document.createElement('button');
+  resetButton.textContent = 'Reset';
+  controls.appendChild(resetButton);
+
+  var switchButton = document.createElement('button');
+  switchButton.textContent = 'Switch to Timer';
+  controls.appendChild(switchButton);
+
+  var durationInput = document.createElement('input');
+  durationInput.type = 'number';
+  durationInput.min = '1';
+  durationInput.value = '10'; // Default to 10 minutes
+  controls.appendChild(durationInput);
+
+  var closeButton = document.createElement('button');
+  closeButton.id = 'closeButton';
+  closeButton.textContent = 'Close';
+  controls.appendChild(closeButton);
+
+  // Timer variables
+  var timerInterval, stopwatchStartTime, countdownEndTime;
+  var isCountdown = false;
+
+  // Format time in HH:MM:SS
+  function formatTime(ms) {
+    var seconds = Math.floor(ms / 1000);
+    var hours = Math.floor(seconds / 3600);
+    seconds %= 3600;
+    var minutes = Math.floor(seconds / 60);
+    seconds %= 60;
+    return [hours, minutes, seconds].map(v => v.toString().padStart(2, '0')).join(':');
+  }
+
+  // Update the display
+  function updateDisplay() {
+    if (isCountdown) {
+      var remainingTime = countdownEndTime - Date.now();
+      if (remainingTime <= 0) {
+        clearInterval(timerInterval);
+        display.textContent = '00:00:00';
+        return;
+      }
+      display.textContent = formatTime(remainingTime);
+    } else {
+      var elapsedTime = Date.now() - stopwatchStartTime;
+      display.textContent = formatTime(elapsedTime);
+    }
+  }
+
+  // Start or resume the timer
+  function startTimer() {
+    if (isCountdown) {
+      var countdownMinutes = parseInt(durationInput.value, 10);
+      countdownEndTime = Date.now() + countdownMinutes * 60 * 1000;
+    } else {
+      stopwatchStartTime = Date.now();
+    }
+    timerInterval = setInterval(updateDisplay, 1000);
+  }
+
+  // Stop the timer
+  function stopTimer() {
+    clearInterval(timerInterval);
+  }
+
+  // Reset the timer
+  function resetTimer() {
+    clearInterval(timerInterval);
+    if (isCountdown) {
+      var countdownMinutes = parseInt(durationInput.value, 10);
+      display.textContent = formatTime(countdownMinutes * 60 * 1000);
+    } else {
+      display.textContent = '00:00:00';
+    }
+  }
+
+  // Toggle between countdown and stopwatch
+  function toggleMode() {
+    isCountdown = !isCountdown;
+    switchButton.textContent = isCountdown ? 'Switch to Stopwatch' : 'Switch to Timer';
+    resetTimer();
+  }
+
+  // Close the timer container
+  function closeTimer() {
+    container.style.display = 'none';
+  }
+
+  // Event listeners
+  startButton.addEventListener('click', startTimer);
+  stopButton.addEventListener('click', stopTimer);
+  resetButton.addEventListener('click', resetTimer);
+  switchButton.addEventListener('click', toggleMode);
+  closeButton.addEventListener('click', closeTimer);
+
+  // Display the container
+  container.style.display = 'block';
+})();
