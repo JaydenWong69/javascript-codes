@@ -1,0 +1,125 @@
+javascript:(function() {
+  // Create a style element for the stats popup
+  var style = document.createElement('style');
+  style.innerHTML = `
+    #statsPopup {
+      position: fixed;
+      top: 10%;
+      left: 50%;
+      transform: translate(-50%, -10%);
+      width: 300px;
+      background: black; /* Background color changed to black */
+      color: #39ff14; /* Text color changed to neon green */
+      padding: 15px;
+      border: 2px solid #39ff14; /* Border color changed to neon green */
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      z-index: 9999;
+      cursor: move; /* Change cursor to indicate draggable */
+    }
+    #statsPopup h2 {
+      margin-top: 0;
+      text-align: center;
+    }
+    #statsPopup ul {
+      list-style: none;
+      padding: 0;
+    }
+    #statsPopup li {
+      margin-bottom: 10px;
+    }
+    #statsPopup button {
+      display: block;
+      margin: 20px auto 0;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      background: #39ff14; /* Button background color changed to neon green */
+      color: white; /* Button text color changed to white */
+      cursor: pointer;
+    }
+    #statsPopup button:hover {
+      background: #32e03b; /* Lighter green color on hover for button */
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Create the stats popup
+  var statsPopup = document.createElement('div');
+  statsPopup.id = 'statsPopup';
+  document.body.appendChild(statsPopup);
+
+  // Add content to the stats popup
+  var title = document.createElement('h2');
+  title.textContent = 'Page Stats';
+  statsPopup.appendChild(title);
+
+  var list = document.createElement('ul');
+
+  var elementsCount = document.createElement('li');
+  elementsCount.textContent = 'Total Elements: ' + document.getElementsByTagName('*').length;
+  list.appendChild(elementsCount);
+
+  var imagesCount = document.createElement('li');
+  imagesCount.textContent = 'Total Images: ' + document.getElementsByTagName('img').length;
+  list.appendChild(imagesCount);
+
+  var linksCount = document.createElement('li');
+  linksCount.textContent = 'Total Links: ' + document.getElementsByTagName('a').length;
+  list.appendChild(linksCount);
+
+  var scriptsCount = document.createElement('li');
+  scriptsCount.textContent = 'Total Scripts: ' + document.getElementsByTagName('script').length;
+  list.appendChild(scriptsCount);
+
+  var titleItem = document.createElement('li');
+  titleItem.textContent = 'Page Title: ' + document.title;
+  list.appendChild(titleItem);
+
+  var urlItem = document.createElement('li');
+  urlItem.textContent = 'Page URL: ' + window.location.href;
+  list.appendChild(urlItem);
+
+  statsPopup.appendChild(list);
+
+  var closeButton = document.createElement('button');
+  closeButton.textContent = 'Close';
+  closeButton.addEventListener('click', function() {
+    document.body.removeChild(statsPopup);
+  });
+  statsPopup.appendChild(closeButton);
+
+  // Make the popup draggable
+  dragElement(statsPopup);
+
+  function dragElement(elmnt) {
+    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+    elmnt.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+      e = e || window.event;
+      e.preventDefault();
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      document.onmouseup = closeDragElement;
+      document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault();
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+      elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    }
+
+    function closeDragElement() {
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+})();
